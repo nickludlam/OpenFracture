@@ -6,12 +6,13 @@ The `Slice` script allows meshes to be sliced into two pieces during runtime. Fr
 
 ## Prerequisites
 
-An object should have the following components added to it. The first three are required components for the script (i.e. they are added automatically) while the Collider is not a required component since you are allowed to use any type of collider.
+An object should have the following components added to it.
 
 * `MeshFilter`
 * `MeshRenderer`
-* `RigidBody`
 * `Collider` (any type)
+
+Any sliced GameObjects with a `RigidBody` component will have the newly created pieces also implement a `Rigidbody`, and mass will be proportionally split between the two pieces.
 
 ## Properties
 

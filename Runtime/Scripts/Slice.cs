@@ -3,7 +3,6 @@ using UnityEngine.Events;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(Rigidbody))]
 public class Slice : MonoBehaviour
 {
     public SliceOptions sliceOptions;
@@ -42,7 +41,7 @@ public class Slice : MonoBehaviour
                 this.fragmentRoot.transform.rotation = this.transform.rotation;
                 this.fragmentRoot.transform.localScale = Vector3.one;
             }
-            
+
             var sliceTemplate = CreateSliceTemplate();
             var sliceNormalLocal = this.transform.InverseTransformDirection(sliceNormalWorld);
             var sliceOriginLocal = this.transform.InverseTransformPoint(sliceOriginWorld);
@@ -53,7 +52,7 @@ public class Slice : MonoBehaviour
                              this.sliceOptions,
                              sliceTemplate,
                              this.fragmentRoot.transform);
-                    
+
             // Done with template, destroy it
             GameObject.Destroy(sliceTemplate);
 
@@ -67,7 +66,7 @@ public class Slice : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Creates a template object which each fragment will derive from
     /// </summary>
@@ -96,16 +95,19 @@ public class Slice : MonoBehaviour
         fragmentCollider.convex = true;
         fragmentCollider.sharedMaterial = thisCollider.sharedMaterial;
         fragmentCollider.isTrigger = thisCollider.isTrigger;
-        
+
         // Copy rigid body properties to fragment
         var thisRigidBody = this.GetComponent<Rigidbody>();
-        var fragmentRigidBody = obj.AddComponent<Rigidbody>();
-        fragmentRigidBody.velocity = thisRigidBody.velocity;
-        fragmentRigidBody.angularVelocity = thisRigidBody.angularVelocity;
-        fragmentRigidBody.drag = thisRigidBody.drag;
-        fragmentRigidBody.angularDrag = thisRigidBody.angularDrag;
-        fragmentRigidBody.useGravity = thisRigidBody.useGravity;
-    
+        if (thisRigidBody != null)
+        {
+            var fragmentRigidBody = obj.AddComponent<Rigidbody>();
+            fragmentRigidBody.velocity = thisRigidBody.velocity;
+            fragmentRigidBody.angularVelocity = thisRigidBody.angularVelocity;
+            fragmentRigidBody.drag = thisRigidBody.drag;
+            fragmentRigidBody.angularDrag = thisRigidBody.angularDrag;
+            fragmentRigidBody.useGravity = thisRigidBody.useGravity;
+        }
+
         // If refracturing is enabled, create a copy of this component and add it to the template fragment object
         if (this.sliceOptions.enableReslicing &&
            (this.currentSliceCount < this.sliceOptions.maxResliceCount))
@@ -115,7 +117,7 @@ public class Slice : MonoBehaviour
 
         return obj;
     }
-    
+
     /// <summary>
     /// Convenience method for copying this component to another component
     /// </summary>

@@ -30,7 +30,7 @@ public static class Fragmenter
     {
         // Define our source mesh data for the fracturing
         FragmentData sourceMesh = new FragmentData(sourceObject.GetComponent<MeshFilter>().sharedMesh);
- 
+
         // We begin by fragmenting the source mesh, then process each fragment in a FIFO queue
         // until we achieve the target fragment count.
         var fragments = new Queue<FragmentData>();
@@ -63,11 +63,11 @@ public static class Fragmenter
         }
 
         int i = 0;
-        foreach(FragmentData meshData in fragments)
+        foreach (FragmentData meshData in fragments)
         {
-            CreateFragment(meshData, 
+            CreateFragment(meshData,
                            sourceObject,
-                           fragmentTemplate, 
+                           fragmentTemplate,
                            parent,
                            saveToDisk,
                            saveFolderPath,
@@ -93,7 +93,7 @@ public static class Fragmenter
     {
         // Define our source mesh data for the fracturing
         FragmentData sourceMesh = new FragmentData(sourceObject.GetComponent<MeshFilter>().sharedMesh);
- 
+
         // We begin by fragmenting the source mesh, then process each fragment in a FIFO queue
         // until we achieve the target fragment count.
         var fragments = new Queue<FragmentData>();
@@ -129,11 +129,11 @@ public static class Fragmenter
         }
 
         int i = 0;
-        foreach(FragmentData meshData in fragments)
+        foreach (FragmentData meshData in fragments)
         {
-            CreateFragment(meshData, 
+            CreateFragment(meshData,
                            sourceObject,
-                           fragmentTemplate, 
+                           fragmentTemplate,
                            parent,
                            false,
                            "",
@@ -235,9 +235,9 @@ public static class Fragmenter
         }
 
         var parentSize = sourceObject.GetComponent<MeshFilter>().sharedMesh.bounds.size;
-        var parentMass = sourceObject.GetComponent<Rigidbody>().mass;
+        var parentRigidBody = sourceObject.GetComponent<Rigidbody>();
 
-        for(int k = 0; k < meshes.Length; k++)
+        for (int k = 0; k < meshes.Length; k++)
         {
             GameObject fragment = GameObject.Instantiate(fragmentTemplate, parent);
             fragment.name = $"Fragment{i}";
@@ -259,21 +259,23 @@ public static class Fragmenter
             collider.sharedMaterial = fragment.GetComponent<Collider>().sharedMaterial;
 
             // Compute mass of the sliced object by dividing mesh bounds by density
-            var parentRigidBody = sourceObject.GetComponent<Rigidbody>();
-            var rigidBody = fragment.GetComponent<Rigidbody>();
+            if (parentRigidBody != null)
+            {
+                var rigidBody = fragment.GetComponent<Rigidbody>();
+                var size = fragmentMesh.bounds.size;
+                float density = (parentSize.x * parentSize.y * parentSize.z) / parentRigidBody.mass;
+                rigidBody.mass = (size.x * size.y * size.z) / density;
+            }
 
-            var size = fragmentMesh.bounds.size;
-            float density = (parentSize.x * parentSize.y * parentSize.z) / parentMass;
-            rigidBody.mass = (size.x * size.y * size.z) / density;
-            
+
             // This code only compiles for the editor
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (saveToDisk)
             {
                 string path = $"{saveFolderPath}/{meshes[k].name}.asset";
                 AssetDatabase.CreateAsset(meshes[k], path);
             }
-            #endif
+#endif
 
             i++;
         }
