@@ -4,8 +4,6 @@ using UnityEngine.TestTools;
 [ExcludeFromCoverage]
 public class PlaneSlicer : MonoBehaviour
 {
-    public float RotationSensitivity = 1f;
-
     public void OnTriggerStay(Collider collider)
     {
         var material = collider.gameObject.GetComponent<MeshRenderer>().material;
