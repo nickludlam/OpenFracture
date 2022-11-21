@@ -22,12 +22,12 @@ Here is a [link](/Documentation~/GettingStarted.md) to the documentation.
 
 ### Fracturing
 - **Runtime and Editor Support** - Fracture meshes either run-time or pre-fracture in the editor for optimal performance.
-- **Arbitary Mesh Geometry** - Support for convex and non-convex meshes as well as meshes with multiple holes. **Note: Meshes must be closed and cannot have self-intersecting geometry**
+- **Arbitrary Mesh Geometry** - Support for convex and non-convex meshes as well as meshes with multiple holes. **Note: Meshes must be closed and cannot have self-intersecting geometry**
 - **2D/3D Fracturing** - Ability to specify which planes the mesh will be fractured in. This is useful when a mesh is effectively 2D (e.g. glass) and only needs to be fractured on two planes.
 - **UV Remapping** - Texture coordinates are preserved along edges where mesh is fractured/sliced.
 - **Custom Inside Material** - Use custom material for inside faces. Supports textures with options for UV scaling & offset.
 - **Recursive Fracturing** - Fragments can be broken down into smaller fragments.
-- **Multiple Trigger Types** - Trigger fractures using triggers, collisions or pressing a key. Additonal trigger types can be added easily.
+- **Multiple Trigger Types** - Trigger fractures using triggers, collisions or pressing a key. Additional trigger types can be added easily.
 - **Tunable Fragment Count** - Directly specify the number of fragments to easily tune performance for different platforms.
 - **Asynchronous** - Support for asynchronous runtime fracturing (single-threaded)
 - **Detect Floating Fragments** - Detects if multiple, isolated fragments are created when fracturing non-convex meshes and treats each fragment as a separate mesh.
@@ -61,7 +61,7 @@ These features are currently **not supported**. They may be added in a future re
 
 ### Slicing
 
-#### Spliting Mesh In Two
+#### Splitting Mesh In Two
 
 The first step in slicing is splitting the existing mesh data into two separate halves, one above the slice plane and the other below. This data will later be used to create two new meshes for each half.
 

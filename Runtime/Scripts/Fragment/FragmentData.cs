@@ -103,6 +103,12 @@ public class FragmentData
         var normals = mesh.normals;
         var uv = mesh.uv;
 
+        bool noUV = uv.Length == 0;
+        if (noUV)
+        {
+            Debug.LogWarning("No model UVs detected in {mesh.name}. Inside Material will not be mapped correctly");
+        }
+
         this.Vertices = new List<MeshVertex>(mesh.vertexCount);
         this.CutVertices = new List<MeshVertex>(mesh.vertexCount / 10);
         this.Constraints = new List<EdgeConstraint>();
@@ -111,13 +117,20 @@ public class FragmentData
         // Add mesh vertices
         for (int i = 0; i < positions.Length; i++)
         {
-            this.Vertices.Add(new MeshVertex(positions[i], normals[i], uv[i]));
+            if (noUV)
+            {
+                this.Vertices.Add(new MeshVertex(positions[i], normals[i], Vector2.zero));
+            }
+            else
+            {
+                this.Vertices.Add(new MeshVertex(positions[i], normals[i], uv[i]));
+            }
         }
 
         // Only meshes with one submesh are currently supported
         this.Triangles = new List<int>[2];
         this.Triangles[0] = new List<int>(mesh.GetTriangles(0));
-        
+
         if (mesh.subMeshCount >= 2)
         {
             this.Triangles[1] = new List<int>(mesh.GetTriangles(1));
@@ -209,10 +222,10 @@ public class FragmentData
         // Loop through each vertex, identifying duplicates. Must compare directly
         // because floating point inconsistencies cause a hash table to be unreliable
         // for vertices that are very close together but not directly coincident
-        for(int i = 0; i < CutVertices.Count; i++)
+        for (int i = 0; i < CutVertices.Count; i++)
         {
             bool duplicate = false;
-            for(int j = 0; j < weldedVerts.Count; j++)
+            for (int j = 0; j < weldedVerts.Count; j++)
             {
                 if (CutVertices[i].position == weldedVerts[j].position)
                 {
@@ -231,7 +244,7 @@ public class FragmentData
         }
 
         // Update the edges
-        for(int i = 0; i < Constraints.Count; i++)
+        for (int i = 0; i < Constraints.Count; i++)
         {
             var edge = Constraints[i];
             edge.v1 = indexMap[edge.v1];
@@ -265,7 +278,7 @@ public class FragmentData
 
         // The cut face does not modify the extents of the object, so we only need to
         // loop through the original vertices to determine the bounds
-        foreach(MeshVertex vertex in Vertices)
+        foreach (MeshVertex vertex in Vertices)
         {
             if (vertex.position.x < min.x) min.x = vertex.position.x;
             if (vertex.position.y < min.y) min.y = vertex.position.y;
@@ -285,7 +298,7 @@ public class FragmentData
     public Mesh ToMesh()
     {
         Mesh mesh = new Mesh();
-        
+
         var layout = new[]
         {
             new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 3),
@@ -300,16 +313,16 @@ public class FragmentData
 
         mesh.subMeshCount = Triangles.Length;
         int indexStart = 0;
-        for(int i = 0; i < Triangles.Length; i++)
+        for (int i = 0; i < Triangles.Length; i++)
         {
             var subMeshIndexBuffer = Triangles[i];
             mesh.SetIndexBufferData(subMeshIndexBuffer, 0, indexStart, subMeshIndexBuffer.Count);
             mesh.SetSubMesh(i, new SubMeshDescriptor(indexStart, subMeshIndexBuffer.Count));
             indexStart += subMeshIndexBuffer.Count;
         }
-        
+
         mesh.RecalculateBounds();
-        
+
         return mesh;
     }
 }

@@ -95,7 +95,7 @@ public static class MeshSlicer
 
             // UV coordinates are based off of the 2D coordinates used for triangulation
             // During triangulation, coordinates are normalized to [0,1], so need to multiply
-            // by normalization scale factor to get back to the appropritate scale
+            // by normalization scale factor to get back to the appropriate scale
             Vector2 uv = new Vector2(
                 (triangulator.normalizationScaleFactor * point.coords.x) * textureScale.x + textureOffset.x,
                 (triangulator.normalizationScaleFactor * point.coords.y) * textureScale.y + textureOffset.y);
@@ -226,7 +226,7 @@ public static class MeshSlicer
                                       FragmentData topSlice,
                                       FragmentData bottomSlice,
                                       SlicedMeshSubmesh subMesh,
-                                      bool v3BelowCutPlane)       
+                                      bool v3BelowCutPlane)
     {
         // - `v1`, `v2`, `v3` are the indexes of the triangle relative to the original mesh data
         // - `v1` and `v2` are on the the side of split plane that belongs to meshA
@@ -256,7 +256,7 @@ public static class MeshSlicer
         //          /         \                                                                  
         //      v2 *___________* v1    triangle normal out of screen
         //                 
-        
+
         float s13;
         float s23;
         Vector3 v13;
